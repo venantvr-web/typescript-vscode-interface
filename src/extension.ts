@@ -85,6 +85,15 @@ export function activate(context: vscode.ExtensionContext) {
                     case 'run-tests':
                         response = await taskRunner.runTests(request.outputFile);
                         break;
+                    case 'git-commit':
+                        if (!request.message || typeof request.message !== 'string') {
+                            throw new Error('message (chaîne non vide) est requis pour git-commit.');
+                        }
+                        response = await taskRunner.gitCommit(request.message);
+                        break;
+                    case 'git-push':
+                        response = await taskRunner.gitPush();
+                        break;
                     case 'create-file':
                         if (!request.filePath || typeof request.filePath !== 'string' || request.content === undefined) {
                             throw new Error('filePath (chaîne) et content sont requis pour create-file.');
@@ -146,7 +155,7 @@ export function activate(context: vscode.ExtensionContext) {
                         response = await fileWriter.renameFiles(request.dirPath, request.extensions || [], request.renamePattern);
                         break;
                     default:
-                        throw new Error('Commande non reconnue. Utilisez "run-tests", "create-file", "get-file", "list-files", "create-files", "update-files", "delete-files", "patch-files", "copy-files", "move-files" ou "rename-files".');
+                        throw new Error('Commande non reconnue. Utilisez "run-tests", "git-commit", "git-push", "create-file", "get-file", "list-files", "create-files", "update-files", "delete-files", "patch-files", "copy-files", "move-files" ou "rename-files".');
                 }
                 response.requestId = requestId;
                 ws.send(JSON.stringify(response));
