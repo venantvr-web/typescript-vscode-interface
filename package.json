@@ -1,0 +1,63 @@
+{
+  "name": "typescript.vscode.interface",
+  "displayName": "TypeScript VSCode Interface",
+  "description": "Extension VSCode pour déclencher des tests, gérer des fichiers et lister le contenu du projet via WebSocket",
+  "version": "0.0.1",
+  "publisher": "xAI",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:typescript-vscode-interface.configure"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "typescript-vscode-interface.configure",
+        "title": "TypeScript VSCode Interface: Configure Settings"
+      }
+    ],
+    "configuration": {
+      "title": "TypeScript VSCode Interface",
+      "properties": {
+        "typescriptVscodeInterface.port": {
+          "type": "number",
+          "default": 3000,
+          "description": "Port du serveur WebSocket pour l'extension."
+        },
+        "typescriptVscodeInterface.taskName": {
+          "type": "string",
+          "default": "run-tests",
+          "description": "Nom de la tâche à exécuter dans tasks.json."
+        },
+        "typescriptVscodeInterface.testDir": {
+          "type": "string",
+          "default": "tests",
+          "description": "Dossier contenant les tests unitaires."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "^16.11.7",
+    "@types/ws": "^8.5.10",
+    "@types/json-patch": "^0.0.30",
+    "@types/mocha": "^10.0.6",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "ws": "^8.11.0",
+    "json-patch": "^0.7.0"
+  }
+}
