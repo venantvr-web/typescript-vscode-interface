@@ -98,7 +98,7 @@ export function activate(context: vscode.ExtensionContext) {
                         if (!request.shellCommand || typeof request.shellCommand !== 'string') {
                             throw new Error('shellCommand (chaîne non vide) est requis pour execute-command.');
                         }
-                        response = await taskRunner.executeCommand(request.shellCommand);
+                        response = await taskRunner.executeCommand(request.shellCommand, request.outputFile);
                         break;
                     // case 'init-git':
                     //     response = await taskRunner.initGit(request.remoteUrl);

@@ -125,7 +125,7 @@ export class TaskRunner {
         }
     } */
 
-    async executeCommand(shellCommand: string): Promise<any> {
+    async executeCommand(shellCommand: string, outputFile?: string): Promise<any> {
         if (!shellCommand || typeof shellCommand !== 'string') {
             this.log(`ERREUR: shellCommand manquant ou invalide pour execute-command`);
             throw new Error('shellCommand (chaîne non vide) est requis pour execute-command.');
@@ -142,7 +142,11 @@ export class TaskRunner {
             } else {
                 this.log('Aucune erreur stderr détectée.');
             }
-            return { status: 'success', 'stdout': stdout, 'stderr': stderr };
+            if (outputFile) {
+                await fs.promises.writeFile(path.join(this.workspacePath, outputFile), stdout + stderr);
+                this.log(`Sortie écrite dans le fichier: ${outputFile}`);
+            }
+            return { status: 'success', stdout, stderr };
         } catch (error: any) {
             this.log(`ERREUR lors de l'exécution de la commande: ${error.message || 'Erreur inconnue'}`);
             if (error.stderr) {
