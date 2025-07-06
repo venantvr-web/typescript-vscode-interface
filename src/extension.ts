@@ -85,15 +85,24 @@ export function activate(context: vscode.ExtensionContext) {
                     case 'run-tests':
                         response = await taskRunner.runTests(request.outputFile);
                         break;
-                    case 'git-commit':
-                        if (!request.message || typeof request.message !== 'string') {
-                            throw new Error('message (chaîne non vide) est requis pour git-commit.');
+                    // case 'git-commit':
+                    //     if (!request.message || typeof request.message !== 'string') {
+                    //         throw new Error('message (chaîne non vide) est requis pour git-commit.');
+                    //     }
+                    //     response = await taskRunner.gitCommit(request.message);
+                    //     break;
+                    // case 'git-push':
+                    //     response = await taskRunner.gitPush();
+                    //     break;
+                    case 'execute-command':
+                        if (!request.shellCommand || typeof request.shellCommand !== 'string') {
+                            throw new Error('shellCommand (chaîne non vide) est requis pour execute-command.');
                         }
-                        response = await taskRunner.gitCommit(request.message);
+                        response = await taskRunner.executeCommand(request.shellCommand);
                         break;
-                    case 'git-push':
-                        response = await taskRunner.gitPush();
-                        break;
+                    // case 'init-git':
+                    //     response = await taskRunner.initGit(request.remoteUrl);
+                    //     break;
                     case 'create-file':
                         if (!request.filePath || typeof request.filePath !== 'string' || request.content === undefined) {
                             throw new Error('filePath (chaîne) et content sont requis pour create-file.');
@@ -155,7 +164,8 @@ export function activate(context: vscode.ExtensionContext) {
                         response = await fileWriter.renameFiles(request.dirPath, request.extensions || [], request.renamePattern);
                         break;
                     default:
-                        throw new Error('Commande non reconnue. Utilisez "run-tests", "git-commit", "git-push", "create-file", "get-file", "list-files", "create-files", "update-files", "delete-files", "patch-files", "copy-files", "move-files" ou "rename-files".');
+                        // throw new Error('Commande non reconnue. Utilisez "run-tests", "git-commit", "git-push", "execute-command", "init-git", "create-file", "get-file", "list-files", "create-files", "update-files", "delete-files", "patch-files", "copy-files", "move-files" ou "rename-files".');
+                        throw new Error('Commande non reconnue. Utilisez "run-tests", "execute-command", "create-file", "get-file", "list-files", "create-files", "update-files", "delete-files", "patch-files", "copy-files", "move-files" ou "rename-files".');
                 }
                 response.requestId = requestId;
                 ws.send(JSON.stringify(response));
@@ -201,23 +211,58 @@ export function activate(context: vscode.ExtensionContext) {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>TypeScript VSCode Interface Configuration</title>
                 <style>
-                    body { font-family: Arial, sans-serif; padding: 20px; }
-                    label { display: block; margin: 10px 0; }
-                    input { width: 200px; padding: 5px; }
-                    button { padding: 10px 20px; margin-top: 10px; }
+                    body {
+                        font-family: Arial, sans-serif;
+                        padding: 20px;
+                    }
+                    h1 {
+                        margin-bottom: 20px;
+                    }
+                    table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        max-width: 500px;
+                    }
+                    th, td {
+                        border: 1px solid #ddd;
+                        padding: 8px;
+                        text-align: left;
+                    }
+                    /* th {
+                        background-color: #f2f2f2;
+                    } */
+                    input {
+                        width: 100%;
+                        padding: 5px;
+                        box-sizing: border-box;
+                    }
+                    button {
+                        padding: 10px 20px;
+                        margin-top: 20px;
+                        cursor: pointer;
+                    }
                 </style>
             </head>
             <body>
                 <h1>TypeScript VSCode Interface Configuration</h1>
-                <label>Port WebSocket:
-                    <input type="number" id="port" value="${port}">
-                </label>
-                <label>Nom de la tâche:
-                    <input type="text" id="taskName" value="${taskName}">
-                </label>
-                <label>Dossier des tests:
-                    <input type="text" id="testDir" value="${testDir}">
-                </label>
+                <table>
+                    <tr>
+                        <th>Paramètre</th>
+                        <th>Valeur</th>
+                    </tr>
+                    <tr>
+                        <td>Port WebSocket</td>
+                        <td><input type="number" id="port" value="${port}"></td>
+                    </tr>
+                    <tr>
+                        <td>Nom de la tâche</td>
+                        <td><input type="text" id="taskName" value="${taskName}"></td>
+                    </tr>
+                    <tr>
+                        <td>Dossier des tests</td>
+                        <td><input type="text" id="testDir" value="${testDir}"></td>
+                    </tr>
+                </table>
                 <button onclick="saveConfig()">Sauvegarder</button>
                 <script>
                     const vscode = acquireVsCodeApi();
