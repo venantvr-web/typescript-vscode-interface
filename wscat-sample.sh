@@ -100,10 +100,10 @@ sleep 1
 wscat -c ws://localhost:3000 -x '{"requestId":"7025","command":"create-file","filePath":"tests/test_length.py","content":"import unittest\nfrom src.math_utils import Length\n\nclass TestLength(unittest.TestCase):\n    def test_length(self):\n        length = Length()\n        self.assertEqual(length.length([1, 2, 3]), 3)\n"}'
 sleep 1
 # Instruction 26: Exécuter les tests en utilisant outputFile
-wscat -c ws://localhost:3000 -x '{"requestId":"7026","command":"execute-command","shellCommand":". venv/bin/activate && python3 -m unittest discover tests","outputFile":"test_results.json"}'
+wscat -c ws://localhost:3000 -x '{"requestId":"7026","command":"execute-command","shellCommand":"python3 -m unittest discover tests","outputFile":"test_results.json"}'
 sleep 1
 
-# wscat -c ws://localhost:3000 -x '{"requestId":"7026","command":"execute-command","shellCommand":". venv/bin/activate && pytest-3 --json-report --json-report-file=report.json","outputFile":"test_results.json"}'
+# wscat -c ws://localhost:3000 -x '{"requestId":"7026","command":"execute-command","shellCommand":"pytest-3 --json-report --json-report-file=report.json","outputFile":"test_results.json"}'
 sleep 1
 
 # Instruction 27: Committer les modifications

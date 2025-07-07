@@ -215,9 +215,6 @@ export function activate(context: vscode.ExtensionContext) {
                         padding: 8px;
                         text-align: left;
                     }
-                    /* th {
-                        background-color: #f2f2f2;
-                    } */
                     input {
                         width: 100%;
                         padding: 5px;
@@ -296,6 +293,7 @@ export function activate(context: vscode.ExtensionContext) {
         dispose: () => {
             log('Arrêt du serveur WebSocket...');
             wss.close();
+            taskRunner.dispose();
             log('Serveur WebSocket arrêté.');
             outputChannel.dispose();
             log('Canal de logs fermé.');
