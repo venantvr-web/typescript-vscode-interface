@@ -6,6 +6,12 @@ import { FileWriter } from './file-writer';
 import { TaskRunner } from './task-runner';
 import { unescapeString } from './utils';
 
+interface MessageRequest {
+    message: Buffer;
+    ws: WebSocket;
+    resolve: () => void;
+}
+
 export function activate(context: vscode.ExtensionContext) {
     const outputChannel = vscode.window.createOutputChannel('TypeScript VSCode Interface Logs');
     const log = (message: string) => {
@@ -47,11 +53,18 @@ export function activate(context: vscode.ExtensionContext) {
         return;
     }
 
-    wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
-        const clientAddress = req.socket.remoteAddress;
-        log(`Nouvelle connexion WebSocket depuis ${clientAddress}`);
+    let isProcessing: boolean = false;
+    let messageQueue: MessageRequest[] = [];
 
-        ws.on('message', async (message: Buffer) => {
+    const processNextMessage = async () => {
+        if (messageQueue.length === 0 || isProcessing) {
+            return;
+        }
+
+        isProcessing = true;
+        const { message, ws, resolve } = messageQueue.shift()!;
+
+        try {
             let request: any;
             try {
                 request = JSON.parse(message.toString());
@@ -63,6 +76,9 @@ export function activate(context: vscode.ExtensionContext) {
                     status: 'error',
                     message: 'Message invalide, JSON attendu.'
                 }));
+                resolve();
+                isProcessing = false;
+                processNextMessage();
                 return;
             }
 
@@ -76,6 +92,9 @@ export function activate(context: vscode.ExtensionContext) {
                     status: 'error',
                     message: 'requestId est requis et doit être une chaîne.'
                 }));
+                resolve();
+                isProcessing = false;
+                processNextMessage();
                 return;
             }
 
@@ -165,6 +184,25 @@ export function activate(context: vscode.ExtensionContext) {
                     message: e.message || 'Erreur inconnue'
                 }));
             }
+        } finally {
+            resolve();
+            isProcessing = false;
+            processNextMessage();
+        }
+    };
+
+    wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
+        const clientAddress = req.socket.remoteAddress;
+        log(`Nouvelle connexion WebSocket depuis ${clientAddress}`);
+
+        ws.on('message', async (message: Buffer) => {
+            messageQueue.push({
+                message,
+                ws,
+                resolve: () => { } // Résolution vide pour le Promise
+            });
+            log(`Message reçu, ajouté à la file: ${message.toString()}`);
+            processNextMessage();
         });
 
         ws.on('close', () => {
