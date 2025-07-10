@@ -1,5 +1,5 @@
 {
-  "name": "typescript.vscode.interface",
+  "name": "typescript-vscode-interface",
   "displayName": "TypeScript VSCode Interface",
   "description": "Extension VSCode pour déclencher des tests, gérer des fichiers et lister le contenu du projet via WebSocket",
   "version": "0.0.1",
