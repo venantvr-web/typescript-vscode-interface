@@ -67,4 +67,4 @@ Voici un exemple pour la création d'un fichier :
     ```
 ## Licence
 
-Ce projet est sous licence MIT.
+Ce projet est sous licence **MIT**.
