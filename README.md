@@ -68,3 +68,7 @@ Voici un exemple pour la création d'un fichier :
 ## Licence
 
 Ce projet est sous licence **MIT**.
+
+## Stack
+
+[![Stack](https://skillicons.dev/icons?i=ts,vscode,nodejs&theme=dark)](https://skillicons.dev)
